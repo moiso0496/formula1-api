@@ -11,12 +11,13 @@ driverSchema = {
         "type": "String",
         "required": True
     },
+    # TODO change driver_birth to requiered True
     "driver_birth_date":{
         "type": "Date",
-        "required": True
+        "required": False
     },
     "driver_team":{
         "type": "String",
         "required": True
-    },
+    }
 }
