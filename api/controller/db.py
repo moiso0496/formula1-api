@@ -14,7 +14,8 @@ class DatabaseClient:
         
 
     def get_document(self,_search_query):
-        self.collection(_search_query)
+        res = self.collection.find_one(_search_query,{"_id" : 0})
+        return res
     
     def delete_document(self,_delete_query):
         self.collection.delete_one(_delete_query)

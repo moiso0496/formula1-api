@@ -1,3 +1,6 @@
+import json
+from flask import jsonify
+
 from flask_restful import Resource
 from api.controller.driver import Driver
 from api.model.driver_shema import driverSchema
@@ -19,9 +22,19 @@ class DriverResource(Resource):
         })
 
         if create == "Driver succesfully created":
-            return {"msg":"Driver succesfully created"} , 201
+            return {"msg":"Driver successfully created"} , 201
         else:
             return {"msg":"It was not able to create the driver"} , 400
+    
+    def get(self):
+        get_driver = self.driver.get_driver({"driver_num":'44'})
+        if get_driver:
+            return jsonify(get_driver)
+        else:
+            if not get_driver:
+                return {"msg" : "Driver not found"}
+            else:
+                return {"msg" : get_driver}
 
         
 
