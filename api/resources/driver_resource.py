@@ -1,8 +1,10 @@
+from flask import jsonify, request
+
 from flask_restful import Resource
 from api.controller.driver import Driver
 from api.model.driver_shema import driverSchema
-
 from api.controller.driver_db import DriverDataBase
+from api.model.data_type.data_type import data_types
 
 class DriverResource(Resource):
     driver_db = DriverDataBase("mongodb://docker:mongopw@127.0.0.1:55000")
@@ -10,18 +12,46 @@ class DriverResource(Resource):
     
 
     def post(self):
-        create = self.driver.create_driver({
-            "driver_num" : "44",
-            "driver_first_name" : "Lewis",
-            "driver_last_name" :"Hamilton",
-            "driver_birth_date": "",
-            "driver_team": "Mercedes Benz"
-        })
-
-        if create == "Driver succesfully created":
-            return {"msg":"Driver succesfully created"} , 201
+        data = request.get_json()
+        if data != {}:
+            create = self.driver.create_driver(data)
+            if create == True:
+                return {"msg":"Driver successfully created"} , 201
+            else:
+                return {"msg":"It was not possible to create the driver", "error": create} , 400
         else:
-            return {"msg":"It was not able to create the driver"} , 400
+            return {"msg": "No valid JSON Data sent on the request"} , 400
+    
+    def get(self):
+        data = request.get_json()
+        if data !={}:
+            get_driver = self.driver.get_driver(data)
+            if type(get_driver) == data_types["Dictionary"]:
+                return jsonify(get_driver)
+            else:
+                if not get_driver:
+                    return {"msg" : "Driver not found"}
+                else:
+                    return {"msg" : get_driver}
+        else:
+            return {"msg": "No valid JSON Data sent on the request"} , 400
+    
+    def delete(self):
+        data= request.get_json()
+        if data != {}:
+            delete = self.driver.delete_driver(data)
+            if type(delete) != data_types["String"]:
+                if delete.deleted_count == 0:
+                    return {"msg" : "Driver not found"}
+                elif delete.deleted_count == 1:
+                    return {"msg":"Driver successfully deleted"} , 201
+            else:
+                return {"msg":"It was not possible to delete the driver", "error": delete} , 400
+        else:
+            return {"msg": "No valid JSON Data sent on the request"} , 400
+            
+
+
 
         
 
