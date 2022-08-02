@@ -11,7 +11,7 @@ class DatabaseClient:
         return res
     
     def update_document(self,_update_query, _update_dict):
-        res = self.collection(_update_query, _update_dict)
+        res = self.collection.update_one(_update_query, {"$set":_update_dict})
         return res
 
     def get_document(self,_search_query):
