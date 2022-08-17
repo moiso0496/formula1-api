@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./api
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    networks:
+      api_net:
+          ipv4_address: 172.24.2.2
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: fsd-formula1
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    networks:
+      api_net:
+        ipv4_address: 172.24.2.3
+    volumes:
+      - ./mongoDB/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongo-volume:/data/db
+
+networks:
+    api_net:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: "172.24.2.0/16"
+volumes:
+  mongo-volume:
+    
