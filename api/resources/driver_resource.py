@@ -7,7 +7,7 @@ from api.controller.driver_db import DriverDataBase
 from api.model.data_type.data_type import data_types
 
 class DriverResource(Resource):
-    driver_db = DriverDataBase("mongodb://docker:mongopw@127.0.0.1:55000")
+    driver_db = DriverDataBase("mongodb://api_user:apipassword@mongo:27017/?authSource=fsd-formula1&readPreference=primary&ssl=false")
     driver = Driver(driverSchema,driver_db)
     
 
