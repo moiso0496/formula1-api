@@ -7,29 +7,29 @@ result_schema = {
     "type": "Number",
     "required": True
     },
-    "driver_position": {{
+    "driver_position": {
     "type": "Number",
     "required": True
-    }},
-    "driver_best_time":{{
+    },
+    "driver_best_time":{
     "type": "Number",
     "required": True
-    }}
+    }
 }
 
 session_schema = {
-    "session_id":{{
+    "session_id":{
     "type": "String",
     "required": True
-    }},
+    },
     "session_results" : result_schema
 }
 
 races_schema={
-    "race_id" : {{
+    "race_id" : {
     "type": "String",
     "required": True
-    }},
+    },
     "practice_one_results" : session_schema,
     "practice_two_results" : session_schema,
     "practice_three_results": session_schema,

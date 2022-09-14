@@ -9,5 +9,6 @@ class Session:
     def create_driver_result(self, driver_result):
         race_controller = Result(self.race_id, self.result_collection) 
         driver_result["session_id"] = self.session_id
-        result = Result.manage_race(self.race_id, driver_result)
+        result = race_controller.manage_race(self.race_id, driver_result)
+        return result
         

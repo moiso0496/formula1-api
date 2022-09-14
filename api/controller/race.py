@@ -1,7 +1,7 @@
 from api.model.data_type.session_prefix import prefix
 
 class Result:
-    def __init__(self, race_id, result_collection) -> None:
+    def __init__(self,result_collection, race_id=None, ) -> None:
         self.race_id = race_id
         self.result_collection = result_collection
 
@@ -9,12 +9,12 @@ class Result:
         result = self.result_collection.get_document({"race_id": race_id})
         return result
     
-    def _get_session_prefix(session_id):
+    def _get_session_prefix(self, session_id):
         if session_id in prefix:
             return prefix[session_id]
 
-    def _session_on_db(self, race, session_race_prefix, session_id):
-        if session_id in race[session_race_prefix]:
+    def _session_on_db(self, race, session_race_prefix):
+        if session_race_prefix in race:
             return race[session_race_prefix]
         return None
     
@@ -26,7 +26,7 @@ class Result:
         #If the race on the databse
         if race_on_db:
             # Find out if the session is on the Database
-            session_on_db = self._session_on_db(race_on_db,session_race_prefix, result_payload["session_id"])
+            session_on_db = self._session_on_db(race_on_db,session_race_prefix)
             # If the session is on the database
             if session_on_db:
                 #Append session result to the session id of the race
@@ -37,7 +37,7 @@ class Result:
                 return f"Successfully updated  {result_payload['session_id']} on {race_id}"
             else:
                 # If the session does not exits add the first session result for the session id of the race
-                self.result_collection.update_document({"race_id": race_id}, {session_race_prefix: result_payload["session_results"]})
+                self.result_collection.update_document({"race_id": race_id}, {session_race_prefix: [result_payload["session_results"]]})
                 return f"Successfully added  {result_payload['session_id']} on {race_id}"
         else:
             # Create a new race dictionary
@@ -47,7 +47,17 @@ class Result:
             # Add the session  and the session results to the new race
             new_race[session_race_prefix] = {
                 "session_id" : result_payload["session_id"],
-                "session_results" : [result_payload[result_payload["session_results"]]]
+                "session_results" : [result_payload["session_results"]]
             }
             # Create a new document
-            self.result_collection.create_document(new_race)
+            response = self.result_collection.create_document(new_race)
+            if response:
+                return f'Successfully added race {race_id} on DB, {result_payload["session_id"]} was added.'
+    
+    def get_all_races(self):
+        response = self.result_collection.get_all_documents()
+        if response:
+            return response
+        else:
+            return "Error getting all the races"
+
