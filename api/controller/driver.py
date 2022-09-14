@@ -8,7 +8,7 @@ class Driver:
     def get_driver(self, driver_query):
         all_good = create_validate_schema(driver_query, self.model, "get")
         if all_good == True:
-            result = self.driver_collection.get_document(driver_query)
+            result = self.driver_collection.get_one_document_with_filter_values(driver_query)
             return result
         else:
             return all_good
