@@ -22,15 +22,7 @@ class DatabaseClient:
     def get_all_documents(self, filter_values={}):
         filter_values["_id"] = 0
         res = self.collection.find({}, filter_values)
-        return list(res)
-    
-    def get_documents_with_filter_values(self, _search_query, filter_values):
-        filter_values["_id"] = 0
-        res = self.collection.find_one(_search_query, filter_values )
         return res
-
-    
-
     
     def delete_document(self,_delete_query):
         res = self.collection.delete_one(_delete_query)

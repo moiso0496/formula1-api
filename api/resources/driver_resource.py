@@ -1,3 +1,5 @@
+import json
+
 from flask import jsonify, request
 
 from flask_restful import Resource
@@ -23,18 +25,22 @@ class DriverResource(Resource):
             return {"msg": "No valid JSON Data sent on the request"} , 400
     
     def get(self):
-        data = request.get_json()
-        if data !={}:
-            get_driver = self.driver.get_driver(data)
-            if type(get_driver) == data_types["Dictionary"]:
-                return jsonify(get_driver)
-            else:
-                if not get_driver:
-                    return {"msg" : "Driver not found"}
-                else:
-                    return {"msg" : get_driver}
+        query = request.args
+        filter = json.loads(query["filter"]) if "filter" in query else {}
+        get_driver = None
+        if "driver_num" in query:
+            driver_num = {"driver_num": int(query["driver_num"])}
+            get_driver = self.driver.get_drivers(driver_num,filter)
         else:
-            return {"msg": "No valid JSON Data sent on the request"} , 400
+            get_driver = self.driver.get_drivers(filter_query=filter)
+        if type(get_driver) == data_types["List"]:
+            return jsonify(get_driver)
+        else:
+            if not get_driver:
+                return {"msg" : "Driver not found"}
+            else:
+                return {"msg" : get_driver}
+        
     
     def delete(self):
         data= request.get_json()

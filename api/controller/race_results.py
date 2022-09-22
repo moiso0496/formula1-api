@@ -9,11 +9,9 @@ class RaceResult:
         self.result_collection = result_collection
     
 
-    def get_all_races_results(self):
+    def get_races_results(self, _race_query=None, filter_query = {}):
         results = Result(self.result_collection)
-        return results.get_all_races()
-        
-
+        return results.get_races_results(_race_query,filter_query)
 
     def create_driver_result(self, driver_result):
         # all_good = create_validate_schema(driver_result, self.model, "create")

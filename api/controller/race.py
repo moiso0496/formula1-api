@@ -1,4 +1,7 @@
+from re import search
 from api.model.data_type.session_prefix import prefix
+from api.model.data_type.data_type import data_types
+
 
 class Result:
     def __init__(self,result_collection, race_id=None, ) -> None:
@@ -54,10 +57,14 @@ class Result:
             if response:
                 return f'Successfully added race {race_id} on DB, {result_payload["session_id"]} was added.'
     
-    def get_all_races(self):
-        response = self.result_collection.get_all_documents()
-        if response:
-            return response
+    def get_races_results(self, race_query=None, filter_query={}):
+        result = None
+        if not race_query:
+            result = self.result_collection.get_all_documents(filter_query)
         else:
-            return "Error getting all the races"
+            result = self.result_collection.get_one_document_with_filter_values(race_query, filter_query)
+
+        if not result:
+            return f'No drivers found'
+        return result if type(result) == data_types["Dictionary"] else list(result)      
 
