@@ -11,11 +11,17 @@ class DatabaseClient:
         return res
     
     def update_document(self,_update_query, _update_dict):
-        res = self.collection(_update_query, _update_dict)
+        res = self.collection.update_one(_update_query, {"$set":_update_dict})
         return res
 
-    def get_document(self,_search_query):
-        res = self.collection.find_one(_search_query,{"_id" : 0})
+    def get_one_document_with_filter_values(self,_search_query, filter_values = {}):
+        filter_values["_id"] = 0
+        res = self.collection.find_one(_search_query, filter_values )
+        return res
+
+    def get_all_documents(self, filter_values={}):
+        filter_values["_id"] = 0
+        res = self.collection.find({}, filter_values)
         return res
     
     def delete_document(self,_delete_query):

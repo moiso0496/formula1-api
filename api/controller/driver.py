@@ -1,17 +1,22 @@
 from api.utils.validate_schema import create_validate_schema
+from api.model.data_type.data_type import data_types
+
 
 class Driver:
     def __init__(self, model, driver_collection) -> None:
         self.model = model
         self.driver_collection = driver_collection  
     
-    def get_driver(self, driver_query):
-        all_good = create_validate_schema(driver_query, self.model, "get")
-        if all_good == True:
-            result = self.driver_collection.get_document(driver_query)
-            return result
+    def get_drivers(self, driver_query=None, filter_query={}):
+        result = None
+        if not driver_query:
+            result = self.driver_collection.get_all_documents(filter_query)
         else:
-            return all_good
+            result = self.driver_collection.get_one_document_with_filter_values(driver_query, filter_query)
+        if not result:
+            return f'No drivers found'
+        return result if type(result) == data_types["Dictionary"] else list(result)
+
         
     
     def create_driver(self, driver_dict):
