@@ -1,15 +1,19 @@
 import json
-from flask import jsonify, request
+import os
 
+from dotenv import load_dotenv
+from flask import jsonify, request
 from flask_restful import Resource
 from api.controller.results_db import ResultsDataBase
 from api.controller.race_results import RaceResult
 from api.model.races_schema import result_schema
 from api.model.data_type.data_type import data_types
 
-RESULT_DB = ResultsDataBase("mongodb://api_user:apipassword@127.0.0.1:27017/?authSource=fsd-formula1&readPreference=primary&ssl=false")
+load_dotenv()
+RESULT_DB = os.getenv('MONGO_DRIVER')
 class ResultsResource(Resource):
-    results = RaceResult(result_schema, RESULT_DB)
+    result_db = ResultsDataBase(RESULT_DB)
+    results = RaceResult(result_schema, result_db)
 
     def get(self):
         query = request.args

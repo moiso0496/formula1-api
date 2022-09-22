@@ -1,15 +1,19 @@
 import json
+import os
 
+from dotenv import load_dotenv
 from flask import jsonify, request
-
 from flask_restful import Resource
 from api.controller.driver import Driver
 from api.model.driver_shema import driverSchema
 from api.controller.driver_db import DriverDataBase
 from api.model.data_type.data_type import data_types
 
+load_dotenv()
+
+DRIVER_DB = os.getenv("MONGO_DRIVER")
 class DriverResource(Resource):
-    driver_db = DriverDataBase("mongodb://api_user:apipassword@127.0.0.1:27017/?authSource=fsd-formula1&readPreference=primary&ssl=false")
+    driver_db = DriverDataBase(DRIVER_DB)
     driver = Driver(driverSchema,driver_db)
     
 
